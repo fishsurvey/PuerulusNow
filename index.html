@@ -896,11 +896,11 @@ button{touch-action:manipulation}
   <div class="lostnote" id="lostNote">Collector lost – no counts recorded. Add any detail in the visit comments.</div>
   <div id="countBox">
   <div class="field">
-    <label>Puerulus<small>clear / unpigmented</small></label>
+    <label>Puerulus</label>
     <div class="step" data-k="p"></div>
   </div>
   <div class="field">
-    <label>Last monthers<small>pigmented</small></label>
+    <label>Last monthers</label>
     <div class="step" data-k="lm"></div>
   </div>
   <div class="field">
@@ -934,7 +934,11 @@ button{touch-action:manipulation}
     <button class="x" data-close>✕</button>
   </div>
   <div class="form">
-    <label class="f"><span>Sample date</span><input type="date" id="fDate"></label>
+    <div class="two">
+      <label class="f"><span>Sample date</span><input type="date" id="fDate"></label>
+      <label class="f"><span>Moon date <small style="font-weight:400">(nearest full moon)</small></span><input type="date" id="fMoon"></label>
+    </div>
+    <label class="f"><span>Vessel</span><input id="fVessel" autocomplete="off"></label>
     <div class="two">
       <label class="f"><span>Tech 1</span><input id="fTech1" autocomplete="off"></label>
       <label class="f"><span>Tech 2</span><input id="fTech2" autocomplete="off"></label>
@@ -961,15 +965,46 @@ button{touch-action:manipulation}
 //# sourceMappingURL=leaflet.js.map</script>
 <script>
 const SITES = [{"name": "Port Gregory", "code": "PBK", "collectors": [{"n": 1, "lat": -28.19571667, "lon": 114.25305}, {"n": 2, "lat": -28.19546667, "lon": 114.2529167}, {"n": 3, "lat": -28.19311667, "lon": 114.2492333}, {"n": 4, "lat": -28.19271667, "lon": 114.24895}, {"n": 5, "lat": -28.19311667, "lon": 114.2484667}]}, {"name": "Abrolhos", "code": "ABR", "collectors": [{"n": 1, "lat": -28.6992, "lon": 113.76435}, {"n": 2, "lat": -28.69588333, "lon": 113.7624833}, {"n": 3, "lat": -28.69518333, "lon": 113.7612833}, {"n": 4, "lat": -28.6909, "lon": 113.7625333}, {"n": 5, "lat": -28.68881667, "lon": 113.7618167}]}, {"name": "Dongara", "code": "DON", "collectors": [{"n": 1, "lat": -29.18143333, "lon": 114.8917}, {"n": 2, "lat": -29.18066667, "lon": 114.8914}, {"n": 3, "lat": -29.18015, "lon": 114.8913}, {"n": 4, "lat": -29.1798, "lon": 114.8917333}, {"n": 5, "lat": -29.17345, "lon": 114.88895}, {"n": 6, "lat": -29.17091667, "lon": 114.88785}]}, {"name": "Jurien", "code": "JUR", "collectors": [{"n": 1, "lat": -30.31015, "lon": 115.00005}, {"n": 2, "lat": -30.31031667, "lon": 114.9984}, {"n": 3, "lat": -30.3125, "lon": 115.0031167}, {"n": 4, "lat": -30.31278333, "lon": 114.99655}, {"n": 5, "lat": -30.31281667, "lon": 114.9961}, {"n": 6, "lat": -30.3144, "lon": 114.9984667}]}, {"name": "Lancelin", "code": "LAN", "collectors": [{"n": 1, "lat": -31.01711667, "lon": 115.32145}, {"n": 2, "lat": -31.01638333, "lon": 115.3213833}, {"n": 3, "lat": -31.01393333, "lon": 115.3213333}, {"n": 4, "lat": -31.0082, "lon": 115.3189667}, {"n": 5, "lat": -31.00783333, "lon": 115.3190333}]}, {"name": "Alkimos", "code": "ALK", "collectors": [{"n": 1, "lat": -31.62235, "lon": 115.6571}, {"n": 2, "lat": -31.62318333, "lon": 115.6572333}, {"n": 3, "lat": -31.6239, "lon": 115.6575}, {"n": 4, "lat": -31.6246, "lon": 115.6570833}, {"n": 5, "lat": -31.6246, "lon": 115.658}]}, {"name": "Warnbro Sound", "code": "WBK", "collectors": [{"n": 1, "lat": -32.35363333, "lon": 115.6928167}, {"n": 2, "lat": -32.35301667, "lon": 115.69205}, {"n": 3, "lat": -32.35308333, "lon": 115.6912333}, {"n": 4, "lat": -32.35248333, "lon": 115.6924333}, {"n": 5, "lat": -32.3517, "lon": 115.6927833}, {"n": 6, "lat": -32.35115, "lon": 115.69325}]}, {"name": "Cape Mentelle", "code": "MBK", "collectors": [{"n": 1, "lat": -33.96048333, "lon": 114.9806}, {"n": 2, "lat": -33.95968333, "lon": 114.9812667}, {"n": 3, "lat": -33.9597, "lon": 114.9805}, {"n": 4, "lat": -33.959, "lon": 114.9810667}, {"n": 5, "lat": -33.95865, "lon": 114.98125}, {"n": 6, "lat": -33.95873333, "lon": 114.9815833}]}];
-const APP_VERSION = '20261117-1651';
+const APP_VERSION = '20261118-0904';
 const TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 const TILE_CACHE = 'tiles-v1';
 const NEAR_M = 60;               // highlight nearest collector within this distance
 const CSV_COLS = ['Day','MONTH','YEAR','LOCATION','FRAME1','FRAME2','FRAME3','FRAME4','FRAME5','FRAME6','fibre','total',
   'temp1','temp2','Avtemp','Salinity','tassel total','sheet total','comments','Sample Date','Tech 1','Tech 2',
   'LM1','LM2','LM3','LM4','LM5','LM6','LMtotal','T1','T2','T3','T4','T5','T6','S1','S2','S3','S4','S5','S6',
-  'Lost1','Lost2','Lost3','Lost4','Lost5','Lost6','Lost Total','Moved1','Moved2','Moved3','Moved4','Moved5','Moved6'];
+  'Lost1','Lost2','Lost3','Lost4','Lost5','Lost6','Lost Total','Moved1','Moved2','Moved3','Moved4','Moved5','Moved6','Vessel','Moon Date'];
 const DIRS = ['N','NE','E','SE','S','SW','W','NW'];
+
+/* ---- full moon (Meeus, Astronomical Algorithms ch.49; accurate to a few minutes) ---- */
+function fullMoonJDE(k){
+  const T = k/1236.85, r = Math.PI/180;
+  let jde = 2451550.09766 + 29.530588861*k + 0.00015437*T*T - 0.000000150*T**3 + 0.00000000073*T**4;
+  const E = 1 - 0.002516*T - 0.0000074*T*T;
+  const M = (2.5534 + 29.10535670*k - 0.0000014*T*T - 0.00000011*T**3)*r;
+  const Mp = (201.5643 + 385.81693528*k + 0.0107582*T*T + 0.00001238*T**3 - 0.000000058*T**4)*r;
+  const F = (160.7108 + 390.67050284*k - 0.0016118*T*T - 0.00000227*T**3 + 0.000000011*T**4)*r;
+  const O = (124.7746 - 1.56375588*k + 0.0020672*T*T + 0.00000215*T**3)*r;
+  const s = Math.sin;
+  jde += -0.40614*s(Mp) + 0.17302*E*s(M) + 0.01614*s(2*Mp) + 0.01043*s(2*F) + 0.00734*E*s(Mp-M)
+    - 0.00515*E*s(Mp+M) + 0.00209*E*E*s(2*M) - 0.00111*s(Mp-2*F) - 0.00057*s(Mp+2*F) + 0.00056*E*s(2*Mp+M)
+    - 0.00042*s(3*Mp) + 0.00042*E*s(M+2*F) + 0.00038*E*s(M-2*F) - 0.00024*E*s(2*Mp-M) - 0.00017*s(O)
+    - 0.00007*s(Mp+2*M) + 0.00004*s(2*Mp-2*F) + 0.00004*s(3*M) + 0.00003*s(Mp+M-2*F) + 0.00003*s(2*Mp+2*F)
+    - 0.00003*s(Mp+M+2*F) + 0.00003*s(Mp-M+2*F) - 0.00002*s(Mp-M-2*F) - 0.00002*s(3*Mp+M) + 0.00002*s(4*Mp);
+  return jde;
+}
+// nearest full moon to an ISO date (local Perth day), returns ISO date in Perth time (UTC+8)
+function nearestFullMoon(iso){
+  const t = Date.parse(iso + 'T12:00:00+08:00');
+  const yr = 2000 + (t - Date.UTC(2000,0,6)) / (365.25*864e5);
+  const k0 = Math.round((yr - 2000)*12.3685 - 0.5) + 0.5;
+  let best = null;
+  for (let k = k0-2; k <= k0+2; k++){
+    const ms = (fullMoonJDE(k) - 2440587.5)*864e5 - 69000;
+    if (!best || Math.abs(ms - t) < Math.abs(best - t)) best = ms;
+  }
+  return new Date(best + 8*3600e3).toISOString().slice(0,10);   // date in WA time (UTC+8)
+}
+
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1058,7 +1093,7 @@ function openSite(s){
   if (!cur){
     const last = store.get('lastHeader', {});
     cur = { id: Date.now().toString(36), site: s.name, code: s.code, date: todayISO(), status: 'open', exported: false,
-      tech1: last.tech1||'', tech2: last.tech2||'', fibre: 'bk', temp1:'', temp2:'', sal:'', comments:'', col:{} };
+      tech1: last.tech1||'', tech2: last.tech2||'', vessel: last.vessel||'', fibre: 'bk', moon: nearestFullMoon(todayISO()), temp1:'', temp2:'', sal:'', comments:'', col:{} };
     visits.push(cur);
   }
   s.collectors.forEach(c => { if (!cur.col[c.n]) cur.col[c.n] = {p:0,lm:0,t:0,s:0,status:'ok',mdist:0,mdir:'',done:false}; });
@@ -1223,10 +1258,14 @@ $('#btnSaveCol').onclick = () => {
 };
 
 /* ---------------- details / finish ---------------- */
-const F = { date:'#fDate', tech1:'#fTech1', tech2:'#fTech2', temp1:'#fTemp1', temp2:'#fTemp2', sal:'#fSal', comments:'#fCom' };
+const F = { date:'#fDate', moon:'#fMoon', vessel:'#fVessel', tech1:'#fTech1', tech2:'#fTech2', temp1:'#fTemp1', temp2:'#fTemp2', sal:'#fSal', comments:'#fCom' };
 Object.entries(F).forEach(([k,sel]) => $(sel).addEventListener('input', () => { cur[k] = $(sel).value; saveVisits(); }));
+// moon date follows the sample date unless someone has typed their own
+$('#fMoon').addEventListener('input', () => { cur.moonManual = true; saveVisits(); });
+$('#fDate').addEventListener('change', () => { if (!cur.moonManual && cur.date){ cur.moon = nearestFullMoon(cur.date); $('#fMoon').value = cur.moon; saveVisits(); } });
 function openDetails(){
   $('#dtTitle').textContent = site.name;
+  if (!cur.moon && cur.date) cur.moon = nearestFullMoon(cur.date);
   Object.entries(F).forEach(([k,sel]) => $(sel).value = cur[k] ?? '');
   const ns = site.collectors.map(c => c.n);
   const row = (lab, k) => `<tr><th style="text-align:left">${lab}</th>${ns.map(n => { const c = cur.col[n]; return !c.done ? '<td class="miss">–</td>' : c.status==='lost' ? '<td>✕</td>' : `<td>${c[k]}</td>`; }).join('')}<td><b>${sumK(cur,k)}</b></td></tr>`;
@@ -1240,7 +1279,7 @@ $('#btnFinish').onclick = () => {
   if (miss.length && !confirm(`Collector${miss.length>1?'s':''} ${miss.join(', ')} not entered. They will be left blank. Finish anyway?`)) return;
   if (!cur.tech1 && !confirm('No Tech 1 entered. Finish anyway?')) return;
   cur.status = 'done'; cur.exported = false; saveVisits();
-  store.set('lastHeader', { tech1:cur.tech1, tech2:cur.tech2 });
+  store.set('lastHeader', { tech1:cur.tech1, tech2:cur.tech2, vessel:cur.vessel });
   closeSheets(); leaveMap(); toast('Visit saved');
 };
 $('#btnDiscard').onclick = () => {
@@ -1282,6 +1321,7 @@ function csvRow(v){
     'Day':d, 'MONTH':m, 'YEAR':y, 'LOCATION':s.code,
     'fibre':'bk', 'total':tot('p'), 'temp1':v.temp1, 'temp2':v.temp2, 'Avtemp':avg, 'Salinity':v.sal,
     'tassel total':tot('t'), 'sheet total':tot('s'), 'comments':v.comments, 'Sample Date':`${d}/${m}/${y}`,
+    'Vessel':v.vessel||'', 'Moon Date': v.moon ? v.moon.split('-').map(Number).reverse().join('/') : '',
     'Tech 1':v.tech1, 'Tech 2':v.tech2, 'LMtotal':tot('lm'), 'Lost Total':tot('lost')
   };
   per('p').forEach((x,i) => r['FRAME'+(i+1)] = x);

@@ -1,5 +1,5 @@
 // Puerulus collectors – offline service worker
-const VERSION = '20261117-1651';
+const VERSION = '20261118-0904';
 const SHELL = 'shell-' + VERSION;
 const TILES = 'tiles-v1';
 const SHELL_FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
