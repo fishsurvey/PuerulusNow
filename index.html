@@ -800,6 +800,24 @@ table.sum{width:100%;border-collapse:collapse;font-size:14px;margin:4px 0 14px}
 table.sum th,table.sum td{padding:6px 4px;text-align:center;border-bottom:1px solid var(--line)}
 table.sum th{font-size:12px;color:var(--mute);font-weight:600}
 table.sum td.miss{color:#b8860b}
+button{touch-action:manipulation}
+.page{position:fixed;inset:0;z-index:1000;background:var(--card);display:none;flex-direction:column}
+.page.on{display:flex}
+.page .ph{display:flex;align-items:center;gap:10px;padding:calc(var(--safe-t) + 10px) 16px 8px;border-bottom:1px solid var(--line)}
+.page .ph h3{margin:0;font-size:26px;flex:1}
+.page .pb{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px 16px 16px}
+.page .pf{padding:10px 16px calc(var(--safe-b) + 12px);border-top:1px solid var(--line);background:var(--card)}
+.step .val{width:80px;height:54px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:26px;font-weight:700;color:var(--ink)}
+.step .val:active{background:#eef4f7}
+#pad{position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center}
+#pad.on{display:flex}
+#pad .pp{background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:14px 16px calc(var(--safe-b) + 14px)}
+#pad .pt{font-weight:600;color:var(--mute);font-size:14px}
+#pad .pd{font-size:44px;font-weight:800;text-align:center;padding:4px 0 10px;min-height:62px}
+#pad .pg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#pad .pg button{height:62px;border-radius:14px;background:#e4ecf0;font-size:26px;font-weight:700;color:var(--navy)}
+#pad .pg button.ok{background:var(--sea);color:#fff;font-size:20px}
+#pad .pg button:active{filter:brightness(.92)}
 .toast{position:fixed;z-index:2000;left:50%;top:calc(var(--safe-t) + 64px);transform:translateX(-50%);
   background:#13232e;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
@@ -825,6 +843,7 @@ table.sum td.miss{color:#b8860b}
       </div>
     </div>
 
+    <div id="mapSection">
     <h2>Offline maps</h2>
     <div class="card">
       <div class="muted" id="mapStatus">Download the satellite maps for every site while you have wifi. GPS works without reception.</div>
@@ -833,7 +852,8 @@ table.sum td.miss{color:#b8860b}
         <button class="btn full" id="btnDownload">Download maps for all sites</button>
       </div>
     </div>
-    <p class="muted" style="text-align:center;margin-top:22px" id="ver"></p>
+    </div>
+    <p class="muted" style="text-align:center;margin-top:22px"><span id="ver"></span><span id="mapsLink" style="display:none"> · <button class="linkbtn" id="btnShowMaps" style="font-size:13px">Re-download maps</button></span></p>
   </div>
 </section>
 
@@ -854,12 +874,13 @@ table.sum td.miss{color:#b8860b}
 <div class="scrim" id="scrim"></div>
 
 <!-- ================= COLLECTOR ENTRY ================= -->
-<div class="sheet" id="entry">
-  <div class="sh-head">
+<div class="page" id="entry">
+  <div class="ph">
     <h3 id="enTitle">Collector 1</h3>
     <button class="x" data-close>✕</button>
   </div>
-  <div class="muted" id="enSub" style="margin-bottom:6px"></div>
+  <div class="pb">
+  <div class="muted" id="enSub" style="margin:4px 0 8px"></div>
   <div class="status" id="segStatus">
     <button data-v="ok">On station</button><button data-v="moved">Moved</button><button data-v="lost">Lost</button>
   </div>
@@ -891,8 +912,20 @@ table.sum td.miss{color:#b8860b}
     <div class="seg" id="segS"></div>
   </div>
   </div>
-  <button class="btn full" id="btnSaveCol" style="margin-top:10px;min-height:56px;font-size:18px">Save collector</button>
+  </div>
+  <div class="pf"><button class="btn full" id="btnSaveCol" style="min-height:58px;font-size:19px">Save collector</button></div>
 </div>
+
+<div id="pad"><div class="pp">
+  <div class="pt" id="padTitle"></div>
+  <div class="pd" id="padDisp">0</div>
+  <div class="pg">
+    <button>1</button><button>2</button><button>3</button>
+    <button>4</button><button>5</button><button>6</button>
+    <button>7</button><button>8</button><button>9</button>
+    <button data-del>⌫</button><button>0</button><button class="ok" data-ok>OK</button>
+  </div>
+</div></div>
 
 <!-- ================= VISIT DETAILS ================= -->
 <div class="sheet" id="details">
@@ -901,10 +934,7 @@ table.sum td.miss{color:#b8860b}
     <button class="x" data-close>✕</button>
   </div>
   <div class="form">
-    <div class="two">
-      <label class="f"><span>Sample date</span><input type="date" id="fDate"></label>
-      <label class="f"><span>Fibre</span><input id="fFibre" placeholder="tan"></label>
-    </div>
+    <label class="f"><span>Sample date</span><input type="date" id="fDate"></label>
     <div class="two">
       <label class="f"><span>Tech 1</span><input id="fTech1" autocomplete="off"></label>
       <label class="f"><span>Tech 2</span><input id="fTech2" autocomplete="off"></label>
@@ -931,7 +961,7 @@ table.sum td.miss{color:#b8860b}
 //# sourceMappingURL=leaflet.js.map</script>
 <script>
 const SITES = [{"name": "Port Gregory", "code": "PBK", "collectors": [{"n": 1, "lat": -28.19571667, "lon": 114.25305}, {"n": 2, "lat": -28.19546667, "lon": 114.2529167}, {"n": 3, "lat": -28.19311667, "lon": 114.2492333}, {"n": 4, "lat": -28.19271667, "lon": 114.24895}, {"n": 5, "lat": -28.19311667, "lon": 114.2484667}]}, {"name": "Abrolhos", "code": "ABR", "collectors": [{"n": 1, "lat": -28.6992, "lon": 113.76435}, {"n": 2, "lat": -28.69588333, "lon": 113.7624833}, {"n": 3, "lat": -28.69518333, "lon": 113.7612833}, {"n": 4, "lat": -28.6909, "lon": 113.7625333}, {"n": 5, "lat": -28.68881667, "lon": 113.7618167}]}, {"name": "Dongara", "code": "DON", "collectors": [{"n": 1, "lat": -29.18143333, "lon": 114.8917}, {"n": 2, "lat": -29.18066667, "lon": 114.8914}, {"n": 3, "lat": -29.18015, "lon": 114.8913}, {"n": 4, "lat": -29.1798, "lon": 114.8917333}, {"n": 5, "lat": -29.17345, "lon": 114.88895}, {"n": 6, "lat": -29.17091667, "lon": 114.88785}]}, {"name": "Jurien", "code": "JUR", "collectors": [{"n": 1, "lat": -30.31015, "lon": 115.00005}, {"n": 2, "lat": -30.31031667, "lon": 114.9984}, {"n": 3, "lat": -30.3125, "lon": 115.0031167}, {"n": 4, "lat": -30.31278333, "lon": 114.99655}, {"n": 5, "lat": -30.31281667, "lon": 114.9961}, {"n": 6, "lat": -30.3144, "lon": 114.9984667}]}, {"name": "Lancelin", "code": "LAN", "collectors": [{"n": 1, "lat": -31.01711667, "lon": 115.32145}, {"n": 2, "lat": -31.01638333, "lon": 115.3213833}, {"n": 3, "lat": -31.01393333, "lon": 115.3213333}, {"n": 4, "lat": -31.0082, "lon": 115.3189667}, {"n": 5, "lat": -31.00783333, "lon": 115.3190333}]}, {"name": "Alkimos", "code": "ALK", "collectors": [{"n": 1, "lat": -31.62235, "lon": 115.6571}, {"n": 2, "lat": -31.62318333, "lon": 115.6572333}, {"n": 3, "lat": -31.6239, "lon": 115.6575}, {"n": 4, "lat": -31.6246, "lon": 115.6570833}, {"n": 5, "lat": -31.6246, "lon": 115.658}]}, {"name": "Warnbro Sound", "code": "WBK", "collectors": [{"n": 1, "lat": -32.35363333, "lon": 115.6928167}, {"n": 2, "lat": -32.35301667, "lon": 115.69205}, {"n": 3, "lat": -32.35308333, "lon": 115.6912333}, {"n": 4, "lat": -32.35248333, "lon": 115.6924333}, {"n": 5, "lat": -32.3517, "lon": 115.6927833}, {"n": 6, "lat": -32.35115, "lon": 115.69325}]}, {"name": "Cape Mentelle", "code": "MBK", "collectors": [{"n": 1, "lat": -33.96048333, "lon": 114.9806}, {"n": 2, "lat": -33.95968333, "lon": 114.9812667}, {"n": 3, "lat": -33.9597, "lon": 114.9805}, {"n": 4, "lat": -33.959, "lon": 114.9810667}, {"n": 5, "lat": -33.95865, "lon": 114.98125}, {"n": 6, "lat": -33.95873333, "lon": 114.9815833}]}];
-const APP_VERSION = '20261117-1541';
+const APP_VERSION = '20261117-1651';
 const TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 const TILE_CACHE = 'tiles-v1';
 const NEAR_M = 60;               // highlight nearest collector within this distance
@@ -951,6 +981,8 @@ const store = {
 };
 let visits = store.get('visits', []);
 const saveVisits = () => store.set('visits', visits);
+let downloading = false, showMaps = false;
+
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 
 function toast(msg, ms=1800){
@@ -1010,6 +1042,9 @@ function renderHome(){
   $('#btnExport').disabled = !unsent;
   $('#homeSub').textContent = navigator.onLine ? 'Tap a site to start' : 'Offline – data is saved on this device';
   $('#ver').textContent = 'Version ' + APP_VERSION;
+  const allMaps = SITES.every(s => maps[s.name]);
+  $('#mapSection').style.display = (allMaps && !downloading && !showMaps) ? 'none' : '';
+  $('#mapsLink').style.display = (allMaps && !showMaps) ? '' : 'none';
 }
 const fmtDate = iso => { const [y,m,d] = iso.split('-'); return `${+d}/${+m}/${y}`; };
 const sumK = (v,k) => Object.values(v.col).reduce((a,c) => a + (c.done && c.status !== 'lost' ? (+c[k]||0) : 0), 0);
@@ -1023,7 +1058,7 @@ function openSite(s){
   if (!cur){
     const last = store.get('lastHeader', {});
     cur = { id: Date.now().toString(36), site: s.name, code: s.code, date: todayISO(), status: 'open', exported: false,
-      tech1: last.tech1||'', tech2: last.tech2||'', fibre: last.fibre||'tan', temp1:'', temp2:'', sal:'', comments:'', col:{} };
+      tech1: last.tech1||'', tech2: last.tech2||'', fibre: 'bk', temp1:'', temp2:'', sal:'', comments:'', col:{} };
     visits.push(cur);
   }
   s.collectors.forEach(c => { if (!cur.col[c.n]) cur.col[c.n] = {p:0,lm:0,t:0,s:0,status:'ok',mdist:0,mdir:'',done:false}; });
@@ -1116,14 +1151,24 @@ function setFollow(on){ follow = on; $('#fabBoat').classList.toggle('on', on); i
 /* ---------------- collector entry ---------------- */
 let enN = null, enData = null;
 function stepper(el, k){
-  el.innerHTML = `<button data-d="-1">−</button><input type="number" inputmode="numeric" pattern="[0-9]*" min="0"><button data-d="1">+</button>`;
-  const inp = el.querySelector('input');
+  el.innerHTML = `<button data-d="-1">−</button><button class="val">0</button><button data-d="1">+</button>`;
+  const inp = el.querySelector('.val');
+  const label = el.closest('.field').querySelector('label').firstChild.textContent.trim();
   const inc = +(el.dataset.inc || 1);
-  el.querySelectorAll('button').forEach(b => b.onclick = () => { enData[k] = Math.max(0, (+enData[k]||0) + inc*(+b.dataset.d)); inp.value = enData[k]; if (k==='mdist') enData.mgps = null; });
-  inp.oninput = () => { enData[k] = Math.max(0, parseInt(inp.value,10) || 0); if (k==='mdist') enData.mgps = null; };
-  inp.onfocus = () => inp.select();
-  el._set = v => inp.value = v;
+  el.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { enData[k] = Math.max(0, (+enData[k]||0) + inc*(+b.dataset.d)); inp.textContent = enData[k]; if (k==='mdist') enData.mgps = null; });
+  inp.onclick = () => openPad(label, enData[k], v => { enData[k] = v; inp.textContent = v; if (k==='mdist') enData.mgps = null; });
+  el._set = v => inp.textContent = v;
 }
+// in-app number pad (no phone keyboard, so the page never shifts)
+let padVal = '', padFresh = true, padCb = null;
+function openPad(title, v, cb){ padVal = String(v||0); padFresh = true; padCb = cb; $('#padTitle').textContent = title; $('#padDisp').textContent = padVal; $('#pad').classList.add('on'); }
+$('#pad').querySelectorAll('.pg button').forEach(b => b.onclick = () => {
+  if (b.dataset.ok != null){ padCb && padCb(parseInt(padVal,10) || 0); $('#pad').classList.remove('on'); return; }
+  if (b.dataset.del != null){ padVal = padFresh ? '0' : (padVal.slice(0,-1) || '0'); padFresh = false; }
+  else { padVal = (padFresh || padVal === '0') ? b.textContent : (padVal.length < 4 ? padVal + b.textContent : padVal); padFresh = false; }
+  $('#padDisp').textContent = padVal;
+});
+$('#pad').onclick = e => { if (e.target.id === 'pad') $('#pad').classList.remove('on'); };
 document.querySelectorAll('#entry .step').forEach(el => stepper(el, el.dataset.k));
 $('#segS').innerHTML = [0,1,2,3].map(v => `<button data-v="${v}">${v}</button>`).join('');
 $('#segS').querySelectorAll('button').forEach(b => b.onclick = () => { enData.s = +b.dataset.v; paintSeg(); });
@@ -1178,7 +1223,7 @@ $('#btnSaveCol').onclick = () => {
 };
 
 /* ---------------- details / finish ---------------- */
-const F = { date:'#fDate', fibre:'#fFibre', tech1:'#fTech1', tech2:'#fTech2', temp1:'#fTemp1', temp2:'#fTemp2', sal:'#fSal', comments:'#fCom' };
+const F = { date:'#fDate', tech1:'#fTech1', tech2:'#fTech2', temp1:'#fTemp1', temp2:'#fTemp2', sal:'#fSal', comments:'#fCom' };
 Object.entries(F).forEach(([k,sel]) => $(sel).addEventListener('input', () => { cur[k] = $(sel).value; saveVisits(); }));
 function openDetails(){
   $('#dtTitle').textContent = site.name;
@@ -1195,7 +1240,7 @@ $('#btnFinish').onclick = () => {
   if (miss.length && !confirm(`Collector${miss.length>1?'s':''} ${miss.join(', ')} not entered. They will be left blank. Finish anyway?`)) return;
   if (!cur.tech1 && !confirm('No Tech 1 entered. Finish anyway?')) return;
   cur.status = 'done'; cur.exported = false; saveVisits();
-  store.set('lastHeader', { tech1:cur.tech1, tech2:cur.tech2, fibre:cur.fibre });
+  store.set('lastHeader', { tech1:cur.tech1, tech2:cur.tech2 });
   closeSheets(); leaveMap(); toast('Visit saved');
 };
 $('#btnDiscard').onclick = () => {
@@ -1218,8 +1263,8 @@ $('#fabFit').onclick = () => { setFollow(false); fitSite(); };
 $('#fabBoat').onclick = () => { if (!lastFix) return toast('No GPS fix yet'); setFollow(!follow); };
 
 /* ---------------- sheets ---------------- */
-function openSheet(id){ $('#scrim').classList.add('on'); $('#'+id).classList.add('on'); }
-function closeSheets(){ document.activeElement && document.activeElement.blur(); $('#scrim').classList.remove('on'); document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on')); }
+function openSheet(id){ const el = $('#'+id); if (!el.classList.contains('page')) $('#scrim').classList.add('on'); else el.querySelector('.pb').scrollTop = 0; el.classList.add('on'); }
+function closeSheets(){ document.activeElement && document.activeElement.blur(); $('#scrim').classList.remove('on'); document.querySelectorAll('.sheet,.page,#pad').forEach(s => s.classList.remove('on')); }
 $('#scrim').onclick = closeSheets;
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
 
@@ -1235,7 +1280,7 @@ function csvRow(v){
   const avg = temps.length ? +(temps.reduce((a,b)=>a+b,0)/temps.length).toFixed(2) : '';
   const r = {
     'Day':d, 'MONTH':m, 'YEAR':y, 'LOCATION':s.code,
-    'fibre':v.fibre, 'total':tot('p'), 'temp1':v.temp1, 'temp2':v.temp2, 'Avtemp':avg, 'Salinity':v.sal,
+    'fibre':'bk', 'total':tot('p'), 'temp1':v.temp1, 'temp2':v.temp2, 'Avtemp':avg, 'Salinity':v.sal,
     'tassel total':tot('t'), 'sheet total':tot('s'), 'comments':v.comments, 'Sample Date':`${d}/${m}/${y}`,
     'Tech 1':v.tech1, 'Tech 2':v.tech2, 'LMtotal':tot('lm'), 'Lost Total':tot('lost')
   };
@@ -1292,7 +1337,7 @@ function siteTiles(s){
   add(padBox(s, 400), 15, 18);    // collectors in detail
   return out;
 }
-let downloading = false;
+
 $('#btnDownload').onclick = async () => {
   if (downloading) return;
   if (!('caches' in window) || !navigator.serviceWorker || !navigator.serviceWorker.controller){
@@ -1333,7 +1378,7 @@ $('#btnDownload').onclick = async () => {
   $('#mapStatus').textContent = bad.length
     ? `Done, but some tiles failed for: ${bad.join(', ')}. Tap download again to retry.${mb}`
     : `All site maps saved for offline use${mb}. GPS works without reception.`;
-  btn.disabled = false; downloading = false; renderHome();
+  btn.disabled = false; downloading = false; if (!bad.length){ showMaps = false; toast('All site maps saved for offline use', 2500); } renderHome();
 };
 
 /* ---------------- boot ---------------- */
@@ -1342,6 +1387,7 @@ if ('serviceWorker' in navigator){
     if (!navigator.serviceWorker.controller) navigator.serviceWorker.addEventListener('controllerchange', () => {}, { once:true });
   }).catch(() => {});
 }
+$('#btnShowMaps').onclick = () => { showMaps = true; renderHome(); $('#mapSection').scrollIntoView({behavior:'smooth'}); };
 window.addEventListener('online', renderHome); window.addEventListener('offline', renderHome);
 renderHome();
 </script>
